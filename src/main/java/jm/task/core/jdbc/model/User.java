@@ -1,10 +1,12 @@
 package jm.task.core.jdbc.model;
 
 import javax.persistence.Column;
+import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
 @Table
+@Entity
 public class User {
 
     @Id
@@ -63,7 +65,6 @@ public class User {
 
     @Override
     public String toString(){
-        return "User :" + "id: " + id + ", name: " + name +
-                ", lastName: " + lastName + ", age: " + age;
+        return "User :" + "id: " + id + ", name: " + name + ", lastName: " + lastName + ", age: " + age;
     }
 }
