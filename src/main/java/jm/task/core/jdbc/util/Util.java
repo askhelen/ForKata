@@ -19,26 +19,23 @@ public class Util {
     private static final String USERNAME = "root";
     private static final String PASSWORD = "root";
 
-    public static Connection connection;
-    public static SessionFactory sessionFactory;
+    private static SessionFactory sessionFactory;
 
-    static {
+    public static Connection getStatement() {
+        Connection connection;
         try {
             Class.forName(DRIVER);
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
-        }
-        try {
             connection = DriverManager.getConnection(URL, USERNAME, PASSWORD);
-        } catch (SQLException e) {
+            return connection;
+        } catch (ClassNotFoundException | SQLException e) {
             e.printStackTrace();
         }
+        return null;
     }
 
-    static {
+    public static SessionFactory getSessionFactory() {
         if (sessionFactory == null) {
             try {
-                Configuration configuration = new Configuration();
                 Properties settings = new Properties();
 
                 settings.put(Environment.DRIVER, DRIVER);
@@ -49,19 +46,16 @@ public class Util {
                 settings.put(Environment.SHOW_SQL, "true");
                 settings.put(Environment.CURRENT_SESSION_CONTEXT_CLASS, "thread");
                 settings.put(Environment.HBM2DDL_AUTO, "create-drop");
+                sessionFactory = new Configuration()
+                        .setProperties(settings)
+                        .addAnnotatedClass(User.class)
+                        .buildSessionFactory();
 
-                configuration.setProperties(settings);
-                configuration.addAnnotatedClass(User.class);
-
-                ServiceRegistry serviceRegistry = new StandardServiceRegistryBuilder()
-                        .applySettings(configuration.getProperties()).build();
-
-                sessionFactory = configuration.buildSessionFactory(serviceRegistry);
             } catch (Exception e) {
                 System.out.println("Problem creating session factory");
                 e.printStackTrace();
             }
         }
-
+        return sessionFactory;
     }
 }
